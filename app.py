@@ -1,83 +1,44 @@
-import streamlit as st
+from flask import Flask, render_template, request
 
-EMISSION_FACTORS ={
-    "India":{
-        "Transportation": 0.14, #kgCO2/km
-        "Electricity":0.82, #kgCO@/kwH
-        "Diet":1.25,#kgCO@/meal
-        "Waste": 0.1#kgCO@/kg
+app = Flask(__name__)
+
+EMISSION_FACTORS = {
+    "India": {
+        "Transportation": 0.14,  # kgCO2/km
+        "Electricity": 0.82,      # kgCO2/kWh
+        "Diet": 1.25,              # kgCO2/meal
+        "Waste": 0.1               # kgCO2/kg
     }
 }
 
-st.set_page_config(layout="wide", page_title="Personal Carbon Calculator")
-st.title("Personal Carbon Calculator")
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        # Get user inputs
+        country = request.form['country']
+        distance = float(request.form['distance']) * 365  # yearly
+        electricity = float(request.form['electricity']) * 12  # yearly
+        waste = float(request.form['waste']) * 52  # yearly
+        meals = int(request.form['meals']) * 365  # yearly
 
-# user inpus
-st.subheader(" 🌍 your country")
-country=st.selectbox("Select",["India"])
+        # Calculate emissions
+        transportation_emissions = EMISSION_FACTORS[country]['Transportation'] * distance / 1000
+        electricity_emissions = EMISSION_FACTORS[country]['Electricity'] * electricity / 1000
+        diet_emissions = EMISSION_FACTORS[country]['Diet'] * meals / 1000
+        waste_emissions = EMISSION_FACTORS[country]['Waste'] * waste / 1000
 
-col1, col2 =st.columns(2)
+        total_emissions = round(
+            transportation_emissions + electricity_emissions + diet_emissions + waste_emissions, 2
+        )
 
-with col1:
-    st.subheader(" 🚗 Daily commute distance (in km)")
-    distance = 0.0  # Initialize distance to 0
-    distance=st.slider("Distance",0.0,100.0,key="distance_input")
+        return render_template('results.html', 
+                               transportation=round(transportation_emissions, 2),
+                               electricity=round(electricity_emissions, 2),
+                               diet=round(diet_emissions, 2),
+                               waste=round(waste_emissions, 2),
+                               total=total_emissions)
 
-    st.subheader(" 💡Monthly electricity (in kwh)")
-    electricity=st.slider("Elecricity",0.0,1000.0,key="electricity_input")
+    return render_template('index.html')
 
-with col2:
-    st.subheader("🗑️ Waste generated per week (in kg)")
-    waste=st.slider("Waste",0.0,100.0,key="waste_input")
-
-    st.subheader("🥗 Number of meals per day)")
-    meals=st.number_input("Meals",0,key="meals_input")
-
-# Normalise input
-if distance > 0:
-   distance=distance*365 # convert distance to yearly
-
-if electricity > 0:
-   electricity=electricity* 12
-
-if meals > 0:
-   meals=meals*365 # convert distance to yearly
-
-if waste > 0:
-   waste=waste* 52 # convert distance to yearly
-
-
-#    calculate carbon emission
-transportation_emissions=EMISSION_FACTORS[country]['Transportation']*distance
-electricity_emissions=EMISSION_FACTORS[country]['Electricity']*electricity
-diet_emissions=EMISSION_FACTORS[country]['Diet']*meals
-waste_emissions=EMISSION_FACTORS[country]['Waste']*waste
-
-transportation_emissions=round(transportation_emissions/1000, 2)
-electricity_emissions=round(electricity_emissions/1000,2)
-diet_emissions=round(diet_emissions/1000,2)
-waste_emissions=round(waste_emissions/1000,2)
-
-# convert emissions to tonnes and round off to 2 decimal places
-total_emissions = round(
-   transportation_emissions + electricity_emissions + diet_emissions+ waste_emissions, 2
-)
-
-if st.button("calculate CO2 Emissions"):
-#    display result
-    st.header("Results")
-    col3, col4 = st.columns(2)
-
-    with col3:
-       st.subheader("crabon Emissions by category")
-       st.info(f"🚗 Transportation: {transportation_emissions} tonnes CO2 per year")
-       st.info(f"💡Electricity: {electricity_emissions} tonnes CO2 per year")
-       st.info(f"🥗 Diet: {diet_emissions} tonnes CO2 per year")
-       st.info(f"🗑️Waste: {waste_emissions} tonnes CO2 per year")
-    
-    with col4:
-        st.subheader("total carbon Footprint")
-        st.info(f"🌍 Your total carbon footprint is: {total_emissions} tonnes CO2 per year")
-        st.warning("Per capita carbon dioxide (CO₂) emissions in India have soared in recent decades, climbing from 0.39 metric tons in 1970 to a high of 1.91 metric tons in 2022. This was an increase of 5.5 percent in comparison to 2021 levels. Total CO₂ emissions in India also reached a record high in 2022.")
-     
-       
+if __name__ == '__main__':
+    app.run(debug=True)

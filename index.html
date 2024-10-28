@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Carbon Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Personal Carbon Calculator</h1>
+    <form method="post">
+        <label for="country">🌍 Your Country:</label>
+        <select name="country">
+            <option value="India">India</option>
+        </select><br>
+
+        <label for="distance">🚗 Daily Commute Distance (in km):</label>
+        <input type="number" name="distance" min="0" max="100" step="0.1"><br>
+
+        <label for="electricity">💡 Monthly Electricity (in kWh):</label>
+        <input type="number" name="electricity" min="0" max="1000" step="0.1"><br>
+
+        <label for="waste">🗑️ Waste Generated Per Week (in kg):</label>
+        <input type="number" name="waste" min="0" max="100" step="0.1"><br>
+
+        <label for="meals">🥗 Number of Meals Per Day:</label>
+        <input type="number" name="meals" min="0" step="1"><br>
+
+        <button type="submit">Calculate CO2 Emissions</button>
+    </form>
+
+    <!-- Link to the JavaScript file -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
