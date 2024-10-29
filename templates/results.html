@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO2 Emission Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <h1>Results</h1>
+    <h2>Carbon Emissions by Category</h2>
+    <p>🚗 Transportation: {{ transportation }} tonnes CO2 per year</p>
+    <p>💡 Electricity: {{ electricity }} tonnes CO2 per year</p>
+    <p>🥗 Diet: {{ diet }} tonnes CO2 per year</p>
+    <p>🗑️ Waste: {{ waste }} tonnes CO2 per year</p>
+
+    <h2>Total Carbon Footprint</h2>
+    <p>🌍 Your total carbon footprint is: {{ total }} tonnes CO2 per year</p>
+    <p>Warning: Per capita carbon dioxide (CO₂) emissions in India have soared in recent decades...</p>
+    
+    <a href="/">Back to Calculator</a>
+</body>
+</html>
